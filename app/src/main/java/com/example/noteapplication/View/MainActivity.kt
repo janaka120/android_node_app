@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var noteViewModel: NoteViewModel
     lateinit var addActivityResultLauncher: ActivityResultLauncher<Intent>
+    lateinit var updateActivityResultLauncher: ActivityResultLauncher<Intent>
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +77,22 @@ class MainActivity : AppCompatActivity() {
 
                 val note = Note(noteTitle, noteDescription)
                 noteViewModel.insert(note)
+            }
+        })
+
+        updateActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { resultUpdateNote ->
+            val resultCode = resultUpdateNote.resultCode
+            val data = resultUpdateNote.data
+
+            if(resultCode == RESULT_OK && data != null) {
+                val updatedTitle = data.getStringExtra("updatedTitle").toString()
+                val updatedDescription = data.getStringExtra("updatedDescription").toString()
+                val noteId = data.getIntExtra("noteId", -1)
+
+                val newNote = Note(updatedTitle, updatedDescription )
+                newNote.id = noteId
+
+                noteViewModel.update(newNote)
             }
         })
     }
