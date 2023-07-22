@@ -1,6 +1,7 @@
 package com.example.noteapplication.View
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recycleView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val noteAdapter = NoteAdapter()
+        val noteAdapter = NoteAdapter(this)
         recyclerView.adapter = noteAdapter
 
         registerActivityResultLauncher()
@@ -90,9 +92,24 @@ class MainActivity : AppCompatActivity() {
                 addActivityResultLauncher.launch(intent)
             }
             R.id.itemDeleteAllNotes -> {
-                Toast.makeText(this, "Delete All Items", Toast.LENGTH_LONG).show()
+                showDialogMsg()
             }
         }
         return true
+    }
+
+    fun showDialogMsg() {
+        val dialogMessage = AlertDialog.Builder(this)
+        dialogMessage.setTitle("Delete All Notes")
+        dialogMessage.setMessage("If click Yes all notes will delete" + ", if you want to delete single note swipe let or right")
+        dialogMessage.setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, which ->
+            dialogInterface.cancel()
+        })
+
+        dialogMessage.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+            noteViewModel.deleteAllNotes()
+        })
+
+        dialogMessage.create().show()
     }
 }
