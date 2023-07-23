@@ -40,4 +40,6 @@ Android device or emulator running Android 7.0 (Nougat) and above
 ## Installation
 Clone the repository to your local machine using:
 
+```git@github.com:janaka120/android_note_app.git```
+
 
